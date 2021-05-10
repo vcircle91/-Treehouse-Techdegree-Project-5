@@ -43,7 +43,7 @@ function showAndFeedModal(id) {
     // Process date of birth into requested format
     let birthDate = Date.parse(allUsers.results[id].dob.date);
     birthDate = new Date(birthDate);
-    birthDate = birthDate.toLocaleString("en-US").split(',')[0];;
+    birthDate = birthDate.toLocaleString("en-US").split(',')[0];
 
     // Process phone number into required format
     const phone = allUsers.results[id].phone.substring(0, 5) + ' ' + allUsers.results[id].phone.substring(5 + 1);
