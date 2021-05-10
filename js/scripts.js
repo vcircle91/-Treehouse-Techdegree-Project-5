@@ -23,12 +23,18 @@ gallery.insertAdjacentHTML('afterend', `
             </div>
 `);
 
-// Initialize empty user list
-let allUsers = '';
-
 // Hide modal in the beginning
 const modal = document.querySelector('.modal-container');
 modal.style.display = "none";
+
+// Allow modal to get closed
+document.querySelector('.modal-close-btn').addEventListener('click', () => {
+    modal.style.display = "none";
+})
+
+
+// Initialize empty user list
+let allUsers = '';
 
 // Function to show and feed the modal
 function showAndFeedModal(id) {
@@ -37,23 +43,23 @@ function showAndFeedModal(id) {
     // Process date of birth into requested format
     let birthDate = Date.parse(allUsers.results[id].dob.date);
     birthDate = new Date(birthDate);
-    birthDate = birthDate.toLocaleString("en-US").slice(0, 10);
+    birthDate = birthDate.toLocaleString("en-US").split(',')[0];;
 
     // Process phone number into required format
     var index = 5;
     const phone = allUsers.results[id].phone.substring(0, index) + ' ' + allUsers.results[id].phone.substring(index + 1);
 
-    document.querySelector('.modal-info-container').insertAdjacentHTML('beforeend', `
+    document.querySelector('.modal-info-container').innerHTML = `
     <img class="modal-img" src="${allUsers.results[id].picture.thumbnail}" alt="profile picture">
                         <h3 id="name" class="modal-name cap">${allUsers.results[id].name.first} ${allUsers.results[id].name.last}</h3>
                         <p class="modal-text">${allUsers.results[id].email}</p>
                         <p class="modal-text cap">${allUsers.results[id].location.city}</p>
                         <hr>
                         <p class="modal-text">${phone}</p>
-                        <p class="modal-text">${allUsers.results[id].location.street.number} ${allUsers.results[id].location.street.name}, ${allUsers.results[id].location.city}, ${allUsers.results[id].location.state} ${allUsers.results[id].location.postcode}</p>
+                        <p class="modal-text">${allUsers.results[id].location.street.number} ${allUsers.results[id].location.street.name}, ${allUsers.results[id].location.city}, ${allUsers.results[id].location.state}, ${allUsers.results[id].location.postcode}</p>
                         <p class="modal-text">Birthday: ${birthDate}</p>
                     </div>
-    `);
+    `;
 }
 
 //Function to display users
