@@ -46,8 +46,7 @@ function showAndFeedModal(id) {
     birthDate = birthDate.toLocaleString("en-US").split(',')[0];;
 
     // Process phone number into required format
-    var index = 5;
-    const phone = allUsers.results[id].phone.substring(0, index) + ' ' + allUsers.results[id].phone.substring(index + 1);
+    const phone = allUsers.results[id].phone.substring(0, 5) + ' ' + allUsers.results[id].phone.substring(5 + 1);
 
     document.querySelector('.modal-info-container').innerHTML = `
     <img class="modal-img" src="${allUsers.results[id].picture.thumbnail}" alt="profile picture">
