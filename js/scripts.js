@@ -25,30 +25,31 @@ document.querySelector('.modal-close-btn').addEventListener('click', () => {
 })
 
 
-// Initialize empty user list
+// Initialize empty user list and result for search
 let allUsers = '';
+let result = [];
 
 
 // Function to show and feed the modal
-function showAndFeedModal(id) {
+function showAndFeedModal(user) {
     modal.style.display = "inherit";
 
     // Process date of birth into requested format
-    let birthDate = Date.parse(allUsers.results[id].dob.date);
+    let birthDate = Date.parse(user.dob.date);
     birthDate = new Date(birthDate);
     birthDate = birthDate.toLocaleString("en-US").split(',')[0];
 
     // Process phone number into required format
-    const phone = allUsers.results[id].phone.substring(0, 5) + ' ' + allUsers.results[id].phone.substring(5 + 1);
+    const phone = user.phone.substring(0, 5) + ' ' + user.phone.substring(5 + 1);
 
     document.querySelector('.modal-info-container').innerHTML = `
-    <img class="modal-img" src="${allUsers.results[id].picture.thumbnail}" alt="profile picture">
-                        <h3 id="name" class="modal-name cap">${allUsers.results[id].name.first} ${allUsers.results[id].name.last}</h3>
-                        <p class="modal-text">${allUsers.results[id].email}</p>
-                        <p class="modal-text cap">${allUsers.results[id].location.city}</p>
+    <img class="modal-img" src="${user.picture.thumbnail}" alt="profile picture">
+                        <h3 id="name" class="modal-name cap">${user.name.first} ${user.name.last}</h3>
+                        <p class="modal-text">${user.email}</p>
+                        <p class="modal-text cap">${user.location.city}</p>
                         <hr>
                         <p class="modal-text">${phone}</p>
-                        <p class="modal-text">${allUsers.results[id].location.street.number} ${allUsers.results[id].location.street.name}, ${allUsers.results[id].location.city}, ${allUsers.results[id].location.state}, ${allUsers.results[id].location.postcode}</p>
+                        <p class="modal-text">${user.location.street.number} ${user.location.street.name}, ${user.location.city}, ${user.location.state}, ${user.location.postcode}</p>
                         <p class="modal-text">Birthday: ${birthDate}</p>
                     </div>
     `;
@@ -77,7 +78,7 @@ function displayUsers(userList) {
     for (var i = 0; i < cards.length; i++) {
         cards[i].addEventListener('click', (e) => {
             currentUser = e.currentTarget.id;
-            showAndFeedModal(currentUser);
+            showAndFeedModal(userList[currentUser]);
         });
     }
 }
@@ -92,14 +93,20 @@ fetch('https://randomuser.me/api/?results=12&nat=US')
     gallery.insertAdjacentHTML('beforeend', `Something went wrong. Please try again later.<br>(${error})`);
   });
 
-// Event listeners for next and prev buttons
+
 document.querySelector('#modal-next').addEventListener('click', () => {
     // Make sure to only scroll through when there is still a user left
     currentUser = parseInt(currentUser);
-    if (currentUser < allUsers.results.length - 1) {
+    // Either use result or allUsers depending if there is any active search
+    if (result.length != 0) {
+        if (currentUser < result.length - 1) {
+            currentUser += 1;
+            showAndFeedModal(result[currentUser]);
+        }
+    } else if (currentUser < allUsers.results.length - 1) {
         currentUser += 1;
-        showAndFeedModal(currentUser);
-    }
+        showAndFeedModal(allUsers.results[currentUser]);
+        }
 });
 
 document.querySelector('#modal-prev').addEventListener('click', () => {
@@ -107,13 +114,18 @@ document.querySelector('#modal-prev').addEventListener('click', () => {
     currentUser = parseInt(currentUser);
     if (currentUser > 0) {
         currentUser -= 1;
-        showAndFeedModal(currentUser);
+        // Either use result or allUsers depending if there is any active search
+        if (result.length != 0) {
+            showAndFeedModal(result[currentUser]);
+        } else {
+            showAndFeedModal(allUsers.results[currentUser]);
+        }
     }
 });
 
 // This function performs the search for first or last name    
 function performSearch(search){
-    let result = [];
+    result = [];
     // Search for all users
     for (var i = 0; i < allUsers.results.length; i++) {
         if (allUsers.results[i].name.first.toLowerCase().includes(search) || allUsers.results[i].name.last.toLowerCase().includes(search))
@@ -128,6 +140,7 @@ function performSearch(search){
         
     } else {
         gallery.innerHTML = 'No results.';
+        result = [];
     }
  }   
 
