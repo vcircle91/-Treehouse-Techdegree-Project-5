@@ -43,7 +43,7 @@ function showAndFeedModal(user) {
     const phone = user.phone.substring(0, 5) + ' ' + user.phone.substring(5 + 1);
 
     document.querySelector('.modal-info-container').innerHTML = `
-    <img class="modal-img" src="${user.picture.thumbnail}" alt="profile picture">
+    <img class="modal-img" src="${user.picture.large}" alt="profile picture">
                         <h3 id="name" class="modal-name cap">${user.name.first} ${user.name.last}</h3>
                         <p class="modal-text">${user.email}</p>
                         <p class="modal-text cap">${user.location.city}</p>
@@ -63,7 +63,7 @@ function displayUsers(userList) {
         gallery.insertAdjacentHTML('beforeend', `
         <div class="card" id ="${i}">
         <div class="card-img-container">
-            <img class="card-img" src="${userList[i].picture.thumbnail}" alt="profile picture">
+            <img class="card-img" src="${userList[i].picture.large}" alt="profile picture">
         </div>
         <div class="card-info-container">
             <h3 id="name" class="card-name cap">${userList[i].name.first} ${userList[i].name.last}</h3>
