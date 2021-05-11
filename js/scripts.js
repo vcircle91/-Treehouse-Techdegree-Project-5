@@ -57,7 +57,6 @@ function showAndFeedModal(user) {
 
 //Function to display users
 function displayUsers(userList) {
-    console.log(userList);
     // Add every user to page
     for (var i = 0; i < userList.length; i++) {
         gallery.insertAdjacentHTML('beforeend', `
