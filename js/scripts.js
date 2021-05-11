@@ -1,13 +1,5 @@
-// Add search container to the DOM using JS
-const searchContainer = document.querySelector('.search-container');
-searchContainer.insertAdjacentHTML('beforeend', `
-<form action="#" method="get">
-    <input type="search" id="search-input" class="search-input" placeholder="Search...">
-    <input type="submit" value="&#x1F50D;" id="search-submit" class="search-submit">
-</form>
-`);
-
 const gallery = document.querySelector('.gallery');
+let currentUser = null;
 
 // Add modal to the DOM using JS
 gallery.insertAdjacentHTML('afterend', `
@@ -35,6 +27,7 @@ document.querySelector('.modal-close-btn').addEventListener('click', () => {
 
 // Initialize empty user list
 let allUsers = '';
+
 
 // Function to show and feed the modal
 function showAndFeedModal(id) {
@@ -83,7 +76,8 @@ function displayUsers(userList) {
     const cards = document.querySelectorAll('.card')
     for (var i = 0; i < cards.length; i++) {
         cards[i].addEventListener('click', (e) => {
-            showAndFeedModal(e.currentTarget.id);
+            currentUser = e.currentTarget.id;
+            showAndFeedModal(currentUser);
         });
     }
 }
@@ -97,3 +91,57 @@ fetch('https://randomuser.me/api/?results=12&nat=US')
 .catch(error => {
     gallery.insertAdjacentHTML('beforeend', `Something went wrong. Please try again later.<br>(${error})`);
   });
+
+// Event listeners for next and prev buttons
+document.querySelector('#modal-next').addEventListener('click', () => {
+    // Make sure to only scroll through when there is still a user left
+    currentUser = parseInt(currentUser);
+    if (currentUser < allUsers.results.length - 1) {
+        currentUser += 1;
+        showAndFeedModal(currentUser);
+    }
+});
+
+document.querySelector('#modal-prev').addEventListener('click', () => {
+    // Make sure to only scroll through when there is still a user left
+    currentUser = parseInt(currentUser);
+    if (currentUser > 0) {
+        currentUser -= 1;
+        showAndFeedModal(currentUser);
+    }
+});
+
+// This function performs the search for first or last name    
+function performSearch(search){
+    let result = [];
+    // Search for all users
+    for (var i = 0; i < allUsers.results.length; i++) {
+        if (allUsers.results[i].name.first.toLowerCase().includes(search) || allUsers.results[i].name.last.toLowerCase().includes(search))
+        {
+            result.push(allUsers.results[i]);
+        }
+    }
+    if (result.length > 0) {
+        // Empty users for search function and call function to display users
+        gallery.innerHTML = '';
+        displayUsers(result)
+        
+    } else {
+        gallery.innerHTML = 'No results.';
+    }
+ }   
+
+// Add search container to the DOM using JS
+const searchContainer = document.querySelector('.search-container');
+searchContainer.insertAdjacentHTML('beforeend', `
+<form action="#" method="get">
+    <input type="search" id="search-input" class="search-input" placeholder="Search...">
+    <input type="submit" value="&#x1F50D;" id="search-submit" class="search-submit">
+</form>
+`);
+
+// Listen to keyup on search field
+const searchField = document.querySelector('.search-input');
+searchField.addEventListener('keyup', (event) => {
+    performSearch(searchField.value.toLowerCase());
+ });
